@@ -12,14 +12,13 @@ pipeline {
 
       steps{
         echo 'building the application...'
-        echo "building version ${NEW_VERSION}"
       }
     }
 
     stage("test"){
       when {
         expression {
-          params.executeTetes
+          parameters.executeTetes
         }
       }
       steps{
@@ -30,7 +29,7 @@ pipeline {
     stage("deploy"){
       steps{
         echo 'deploying the application...'
-        echo "deploying version ${params.VERSION}"
+        echo "deploying version ${parameters.VERSION}"
       }
     }
     
