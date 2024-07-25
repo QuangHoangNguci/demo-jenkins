@@ -1,38 +1,44 @@
+def gv
 
 pipeline {
-  agent any
-
-  parameters {
-    choice(name: 'VERSION', choices: ['1.1.0', '1.2.0', '1.3.0'], description: 'Choose the version to deploy')
-    booleanParam(name: 'executeTests', defaultValue: true, description: 'Set to true to execute tests')
-  }
-
-  stages {
-    stage("build") {
-      steps {
-        echo 'Building the application...'
-        // Thêm các bước xây dựng ứng dụng (build steps) ở đây nếu cần thiết
-      }
+    agent any
+    parameters {
+        choice(name: 'VERSION', choices: ['1.1.0', '1.2.0', '1.3.0'], description: '')
+        booleanParam(name: 'executeTests', defaultValue: true, description: '')
     }
-
-    stage("test") {
-      when {
-        expression {
-          params.executeTests
+    stages {
+        stage("init") {
+            steps {
+                script {
+                   gv = load "script.groovy" 
+                }
+            }
         }
-      }
-      steps {
-        echo 'Testing the application...'
-        // Thêm các bước kiểm thử ở đây nếu cần thiết
-      }
-    }
-
-    stage("deploy") {
-      steps {
-        echo 'Deploying the application...'
-        echo "Deploying version ${params.VERSION}"
-        // Thêm các bước triển khai ứng dụng ở đây nếu cần thiết
-      }
-    }
-  }
+        stage("build") {
+            steps {
+                script {
+                    gv.buildApp()
+                }
+            }
+        }
+        stage("test") {
+            when {
+                expression {
+                    params.executeTests
+                }
+            }
+            steps {
+                script {
+                    gv.testApp()
+                }
+            }
+        }
+        stage("deploy") {
+            steps {
+                script {
+                    gv.deployApp()
+                }
+            }
+        }
+    }   
 }
